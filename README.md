@@ -20,7 +20,7 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/jalalhejazi/agent-archi
 The PowerShell script supports the following options:
 
 - `-OverwriteInstructions` - Overwrite existing instruction files
-- `-OverwriteStandards` - Overwrite existing standards files
+- `-OverwriteStandards` - Overwrite existing standards files  
 - `-Silent` - Run without prompts (for automated installation)
 - `-Help` - Show help message
 

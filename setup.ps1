@@ -34,7 +34,7 @@ if ($IsRemoteExecution -and !$Silent) {
     Write-Host "====================================================="
 } else {
     Write-Host "[>] Agent Architect Setup Script for Windows"
-    Write-Host "===================================="
+Write-Host "===================================="
 }
 Write-Host ""
 
@@ -98,9 +98,9 @@ function Download-File {
     $RetryDelay = 2
     
     for ($i = 1; $i -le $MaxRetries; $i++) {
-        try {
+    try {
             Invoke-WebRequest -Uri $Url -OutFile $LocalPath -UseBasicParsing -TimeoutSec 30
-            if ($Exists -and $ShouldOverwrite) {
+        if ($Exists -and $ShouldOverwrite) {
                 if (!$Silent) { Write-Host "  [+] $LocalPath (overwritten)" }
             } else {
                 if (!$Silent) { Write-Host "  [+] $LocalPath" }
@@ -114,7 +114,7 @@ function Download-File {
                     Write-Host "     Error: $($_.Exception.Message)"
                 }
                 return $false
-            } else {
+        } else {
                 if (!$Silent) { Write-Host "  [!] Retry $i/$MaxRetries for $LocalPath..." }
                 Start-Sleep -Seconds $RetryDelay
             }
