@@ -56,6 +56,9 @@ If downloads fail, check:
 - Firewall settings
 - Proxy configuration (if applicable)
 
+### Display Issues
+The setup scripts use ASCII symbols `[>] [+] [*] [i] [!] [-]` for maximum PowerShell compatibility across all Windows versions and terminal configurations.
+
 ### File Permission Issues
 If you get permission errors:
 - Run PowerShell as Administrator

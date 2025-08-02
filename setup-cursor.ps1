@@ -18,7 +18,7 @@ if ($Help) {
 # Set error action preference to stop on errors
 $ErrorActionPreference = "Stop"
 
-Write-Host "🚀 Agent Architect Cursor Setup for Windows"
+Write-Host "[>] Agent Architect Cursor Setup for Windows"
 Write-Host "===================================="
 Write-Host ""
 
@@ -28,7 +28,7 @@ $AgentArchitectInstructions = Join-Path $HomeDir ".agent-architect\instructions"
 $AgentArchitectStandards = Join-Path $HomeDir ".agent-architect\standards"
 
 if (!(Test-Path $AgentArchitectInstructions) -or !(Test-Path $AgentArchitectStandards)) {
-    Write-Host "⚠️  Agent Architect base installation not found!"
+    Write-Host "[!] Agent Architect base installation not found!"
     Write-Host ""
     Write-Host "Please install the Agent Architect base installation first:"
     Write-Host ""
@@ -42,7 +42,7 @@ if (!(Test-Path $AgentArchitectInstructions) -or !(Test-Path $AgentArchitectStan
 }
 
 Write-Host ""
-Write-Host "📁 Creating .cursor\rules directory..."
+Write-Host "[*] Creating .cursor\rules directory..."
 $CursorRulesDir = ".cursor\rules"
 if (!(Test-Path $CursorRulesDir)) {
     New-Item -ItemType Directory -Path $CursorRulesDir -Force | Out-Null
@@ -52,7 +52,7 @@ if (!(Test-Path $CursorRulesDir)) {
 $BaseUrl = "https://raw.githubusercontent.com/jalalhejazi/agent-architect/main"
 
 Write-Host ""
-Write-Host "📥 Downloading and setting up Cursor command files..."
+Write-Host "[*] Downloading and setting up Cursor command files..."
 
 # Function to process a command file
 function Process-CommandFile {
@@ -87,10 +87,10 @@ alwaysApply: false
         # Clean up temp file
         Remove-Item $TempFile -Force
         
-        Write-Host "  ✓ .cursor\rules\${Command}.md"
+        Write-Host "  [+] .cursor\rules\${Command}.md"
     }
     catch {
-        Write-Host "  ❌ Failed to download ${Command}.md`: $($_.Exception.Message)"
+        Write-Host "  [-] Failed to download ${Command}.md`: $($_.Exception.Message)"
         return $false
     }
     
@@ -105,9 +105,9 @@ foreach ($Cmd in $Commands) {
 }
 
 Write-Host ""
-Write-Host "✅ Agent Architect Cursor setup complete!"
+Write-Host "[+] Agent Architect Cursor setup complete!"
 Write-Host ""
-Write-Host "📍 Files installed to:"
+Write-Host "[i] Files installed to:"
 Write-Host "   .cursor\rules\             - Cursor command rules"
 Write-Host ""
 Write-Host "Next steps:"

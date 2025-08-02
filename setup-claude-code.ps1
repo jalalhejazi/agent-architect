@@ -18,7 +18,7 @@ if ($Help) {
 # Set error action preference to stop on errors
 $ErrorActionPreference = "Stop"
 
-Write-Host "🚀 Agent Architect Claude Code Setup for Windows"
+Write-Host "[>] Agent Architect Claude Code Setup for Windows"
 Write-Host "========================================="
 Write-Host ""
 
@@ -28,7 +28,7 @@ $AgentArchitectInstructions = Join-Path $HomeDir ".agent-architect\instructions"
 $AgentArchitectStandards = Join-Path $HomeDir ".agent-architect\standards"
 
 if (!(Test-Path $AgentArchitectInstructions) -or !(Test-Path $AgentArchitectStandards)) {
-    Write-Host "⚠️  Agent Architect base installation not found!"
+    Write-Host "[!] Agent Architect base installation not found!"
     Write-Host ""
     Write-Host "Please install the Agent Architect base installation first:"
     Write-Host ""
@@ -42,7 +42,7 @@ if (!(Test-Path $AgentArchitectInstructions) -or !(Test-Path $AgentArchitectStan
 }
 
 Write-Host ""
-Write-Host "📁 Creating .claude-code/agents directory..."
+Write-Host "[*] Creating .claude-code/agents directory..."
 $ClaudeCodeAgentsDir = ".claude-code\agents"
 if (!(Test-Path $ClaudeCodeAgentsDir)) {
     New-Item -ItemType Directory -Path $ClaudeCodeAgentsDir -Force | Out-Null
@@ -52,7 +52,7 @@ if (!(Test-Path $ClaudeCodeAgentsDir)) {
 $BaseUrl = "https://raw.githubusercontent.com/jalalhejazi/agent-architect/main"
 
 Write-Host ""
-Write-Host "📥 Downloading and setting up Claude Code agent files..."
+Write-Host "[*] Downloading and setting up Claude Code agent files..."
 
 # Function to download agent file
 function Download-AgentFile {
@@ -65,10 +65,10 @@ function Download-AgentFile {
     
     try {
         Invoke-WebRequest -Uri $Url -OutFile $LocalPath -UseBasicParsing
-        Write-Host "  ✓ .claude-code\agents\${AgentName}.md"
+        Write-Host "  [+] .claude-code\agents\${AgentName}.md"
     }
     catch {
-        Write-Host "  ❌ Failed to download ${AgentName}.md`: $($_.Exception.Message)"
+        Write-Host "  [-] Failed to download ${AgentName}.md`: $($_.Exception.Message)"
         return $false
     }
     
@@ -83,9 +83,9 @@ foreach ($Agent in $Agents) {
 }
 
 Write-Host ""
-Write-Host "✅ Agent Architect Claude Code setup complete!"
+Write-Host "[+] Agent Architect Claude Code setup complete!"
 Write-Host ""
-Write-Host "📍 Files installed to:"
+Write-Host "[i] Files installed to:"
 Write-Host "   .claude-code\agents\     - Claude Code agent files"
 Write-Host ""
 Write-Host "Next steps:"

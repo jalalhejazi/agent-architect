@@ -30,23 +30,23 @@ $ErrorActionPreference = "Stop"
 # Check if running from remote execution
 $IsRemoteExecution = $MyInvocation.MyCommand.Path -eq $null
 if ($IsRemoteExecution -and !$Silent) {
-    Write-Host "🌐 Running Agent Architect Setup directly from GitHub"
+    Write-Host "[>] Running Agent Architect Setup directly from GitHub"
     Write-Host "====================================================="
 } else {
-    Write-Host "🚀 Agent Architect Setup Script for Windows"
+    Write-Host "[>] Agent Architect Setup Script for Windows"
     Write-Host "===================================="
 }
 Write-Host ""
 
 # Test network connectivity
 if (!$Silent) {
-    Write-Host "🔗 Testing network connectivity..."
+    Write-Host "[*] Testing network connectivity..."
     try {
         $null = Invoke-WebRequest -Uri "https://raw.githubusercontent.com" -Method Head -UseBasicParsing -TimeoutSec 10
-        Write-Host "✓ Network connection successful"
+        Write-Host "[+] Network connection successful"
     }
     catch {
-        Write-Host "❌ Network connectivity issue detected"
+        Write-Host "[-] Network connectivity issue detected"
         Write-Host "Please check your internet connection and try again."
         Write-Host "Error: $($_.Exception.Message)"
         exit 1
@@ -62,7 +62,7 @@ $HomeDir = $env:USERPROFILE
 $AgentArchitectDir = Join-Path $HomeDir ".agent-architect"
 
 # Create directories
-Write-Host "📁 Creating directories..."
+Write-Host "[*] Creating directories..."
 $Directories = @(
     (Join-Path $AgentArchitectDir "standards"),
     (Join-Path $AgentArchitectDir "standards\code-style"),
@@ -90,7 +90,7 @@ function Download-File {
     $ShouldDownload = !$Exists -or $ShouldOverwrite
     
     if ($Exists -and !$ShouldOverwrite) {
-        if (!$Silent) { Write-Host "  ⚠️  $LocalPath already exists - skipping" }
+        if (!$Silent) { Write-Host "  [!] $LocalPath already exists - skipping" }
         return $true
     }
     
@@ -101,21 +101,21 @@ function Download-File {
         try {
             Invoke-WebRequest -Uri $Url -OutFile $LocalPath -UseBasicParsing -TimeoutSec 30
             if ($Exists -and $ShouldOverwrite) {
-                if (!$Silent) { Write-Host "  ✓ $LocalPath (overwritten)" }
+                if (!$Silent) { Write-Host "  [+] $LocalPath (overwritten)" }
             } else {
-                if (!$Silent) { Write-Host "  ✓ $LocalPath" }
+                if (!$Silent) { Write-Host "  [+] $LocalPath" }
             }
             return $true
         }
         catch {
             if ($i -eq $MaxRetries) {
                 if (!$Silent) { 
-                    Write-Host "  ❌ Failed to download $LocalPath after $MaxRetries attempts"
+                    Write-Host "  [-] Failed to download $LocalPath after $MaxRetries attempts"
                     Write-Host "     Error: $($_.Exception.Message)"
                 }
                 return $false
             } else {
-                if (!$Silent) { Write-Host "  ⚠️  Retry $i/$MaxRetries for $LocalPath..." }
+                if (!$Silent) { Write-Host "  [!] Retry $i/$MaxRetries for $LocalPath..." }
                 Start-Sleep -Seconds $RetryDelay
             }
         }
@@ -125,7 +125,7 @@ function Download-File {
 
 # Download standards files
 Write-Host ""
-Write-Host "📥 Downloading standards files to $AgentArchitectDir\standards\"
+Write-Host "[*] Downloading standards files to $AgentArchitectDir\standards\"
 
 $StandardsFiles = @(
     @{Url = "$BaseUrl/standards/tech-stack.md"; LocalPath = Join-Path $AgentArchitectDir "standards\tech-stack.md"},
@@ -139,7 +139,7 @@ foreach ($File in $StandardsFiles) {
 
 # Download code-style subdirectory files
 Write-Host ""
-Write-Host "📥 Downloading code style files to $AgentArchitectDir\standards\code-style\"
+Write-Host "[*] Downloading code style files to $AgentArchitectDir\standards\code-style\"
 
 $CodeStyleFiles = @(
     @{Url = "$BaseUrl/standards/code-style/css-style.md"; LocalPath = Join-Path $AgentArchitectDir "standards\code-style\css-style.md"},
@@ -153,10 +153,10 @@ foreach ($File in $CodeStyleFiles) {
 
 # Download instruction files
 Write-Host ""
-Write-Host "📥 Downloading instruction files to $AgentArchitectDir\instructions\"
+Write-Host "[*] Downloading instruction files to $AgentArchitectDir\instructions\"
 
 # Core instruction files
-Write-Host "  📂 Core instructions:"
+Write-Host "  [*] Core instructions:"
 
 $CoreInstructionFiles = @(
     @{Url = "$BaseUrl/instructions/core/plan-product.md"; LocalPath = Join-Path $AgentArchitectDir "instructions\core\plan-product.md"},
@@ -172,7 +172,7 @@ foreach ($File in $CoreInstructionFiles) {
 
 # Meta instruction files
 Write-Host ""
-Write-Host "  📂 Meta instructions:"
+Write-Host "  [*] Meta instructions:"
 
 $MetaInstructionFiles = @(
     @{Url = "$BaseUrl/instructions/meta/pre-flight.md"; LocalPath = Join-Path $AgentArchitectDir "instructions\meta\pre-flight.md"}
@@ -184,21 +184,21 @@ foreach ($File in $MetaInstructionFiles) {
 
 Write-Host ""
 if ($IsRemoteExecution) {
-    Write-Host "✅ Agent Architect successfully installed from GitHub!"
+    Write-Host "[+] Agent Architect successfully installed from GitHub!"
 } else {
-    Write-Host "✅ Agent Architect base installation complete!"
+    Write-Host "[+] Agent Architect base installation complete!"
 }
 Write-Host ""
-Write-Host "📍 Files installed to:"
+Write-Host "[i] Files installed to:"
 Write-Host "   $AgentArchitectDir\standards\     - Your development standards"
 Write-Host "   $AgentArchitectDir\instructions\  - Agent Architect instructions"
 Write-Host ""
 
 if (!$OverwriteInstructions -and !$OverwriteStandards) {
-    Write-Host "💡 Note: Existing files were skipped to preserve your customizations"
+    Write-Host "[i] Note: Existing files were skipped to preserve your customizations"
     Write-Host "   Use -OverwriteInstructions or -OverwriteStandards to update specific files"
 } else {
-    Write-Host "💡 Note: Some files were overwritten based on your flags"
+    Write-Host "[i] Note: Some files were overwritten based on your flags"
     if (!$OverwriteInstructions) {
         Write-Host "   Existing instruction files were preserved"
     }
@@ -214,10 +214,10 @@ Write-Host "1. Customize your coding standards in $AgentArchitectDir\standards\"
 Write-Host ""
 Write-Host "2. Install commands for your AI coding assistant(s):"
 Write-Host ""
-Write-Host "   📦 Claude Code (direct install):"
+Write-Host "   [*] Claude Code (direct install):"
 Write-Host "     iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-claude-code.ps1 | iex"
 Write-Host ""
-Write-Host "   🎯 Cursor (direct install):"
+Write-Host "   [*] Cursor (direct install):"
 Write-Host "     iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-cursor.ps1 | iex"
 Write-Host ""
 Write-Host "   - Using something else? See instructions at https://github.com/jalalhejazi/agent-architect"
