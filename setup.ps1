@@ -4,6 +4,7 @@
 param(
     [switch]$OverwriteInstructions,
     [switch]$OverwriteStandards,
+    [switch]$Silent,
     [switch]$Help
 )
 
@@ -14,7 +15,11 @@ if ($Help) {
     Write-Host "Options:"
     Write-Host "  -OverwriteInstructions    Overwrite existing instruction files"
     Write-Host "  -OverwriteStandards       Overwrite existing standards files"
+    Write-Host "  -Silent                   Run without prompts (for automated installation)"
     Write-Host "  -Help                     Show this help message"
+    Write-Host ""
+    Write-Host "Quick Install from GitHub:"
+    Write-Host "  iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup.ps1 | iex"
     Write-Host ""
     exit 0
 }
@@ -22,9 +27,32 @@ if ($Help) {
 # Set error action preference to stop on errors
 $ErrorActionPreference = "Stop"
 
-Write-Host "🚀 Agent Architect Setup Script for Windows"
-Write-Host "===================================="
+# Check if running from remote execution
+$IsRemoteExecution = $MyInvocation.MyCommand.Path -eq $null
+if ($IsRemoteExecution -and !$Silent) {
+    Write-Host "🌐 Running Agent Architect Setup directly from GitHub"
+    Write-Host "====================================================="
+} else {
+    Write-Host "🚀 Agent Architect Setup Script for Windows"
+    Write-Host "===================================="
+}
 Write-Host ""
+
+# Test network connectivity
+if (!$Silent) {
+    Write-Host "🔗 Testing network connectivity..."
+    try {
+        $null = Invoke-WebRequest -Uri "https://raw.githubusercontent.com" -Method Head -UseBasicParsing -TimeoutSec 10
+        Write-Host "✓ Network connection successful"
+    }
+    catch {
+        Write-Host "❌ Network connectivity issue detected"
+        Write-Host "Please check your internet connection and try again."
+        Write-Host "Error: $($_.Exception.Message)"
+        exit 1
+    }
+    Write-Host ""
+}
 
 # Base URL for raw GitHub content
 $BaseUrl = "https://raw.githubusercontent.com/jalalhejazi/agent-architect/main"
@@ -49,7 +77,7 @@ foreach ($Dir in $Directories) {
     }
 }
 
-# Function to download file with overwrite logic
+# Function to download file with overwrite logic and retry
 function Download-File {
     param(
         [string]$Url,
@@ -62,21 +90,37 @@ function Download-File {
     $ShouldDownload = !$Exists -or $ShouldOverwrite
     
     if ($Exists -and !$ShouldOverwrite) {
-        Write-Host "  ⚠️  $LocalPath already exists - skipping"
-        return
+        if (!$Silent) { Write-Host "  ⚠️  $LocalPath already exists - skipping" }
+        return $true
     }
     
-    try {
-        Invoke-WebRequest -Uri $Url -OutFile $LocalPath -UseBasicParsing
-        if ($Exists -and $ShouldOverwrite) {
-            Write-Host "  ✓ $LocalPath (overwritten)"
-        } else {
-            Write-Host "  ✓ $LocalPath"
+    $MaxRetries = 3
+    $RetryDelay = 2
+    
+    for ($i = 1; $i -le $MaxRetries; $i++) {
+        try {
+            Invoke-WebRequest -Uri $Url -OutFile $LocalPath -UseBasicParsing -TimeoutSec 30
+            if ($Exists -and $ShouldOverwrite) {
+                if (!$Silent) { Write-Host "  ✓ $LocalPath (overwritten)" }
+            } else {
+                if (!$Silent) { Write-Host "  ✓ $LocalPath" }
+            }
+            return $true
+        }
+        catch {
+            if ($i -eq $MaxRetries) {
+                if (!$Silent) { 
+                    Write-Host "  ❌ Failed to download $LocalPath after $MaxRetries attempts"
+                    Write-Host "     Error: $($_.Exception.Message)"
+                }
+                return $false
+            } else {
+                if (!$Silent) { Write-Host "  ⚠️  Retry $i/$MaxRetries for $LocalPath..." }
+                Start-Sleep -Seconds $RetryDelay
+            }
         }
     }
-    catch {
-        Write-Host "  ❌ Failed to download $LocalPath`: $($_.Exception.Message)"
-    }
+    return $false
 }
 
 # Download standards files
@@ -139,7 +183,11 @@ foreach ($File in $MetaInstructionFiles) {
 }
 
 Write-Host ""
-Write-Host "✅ Agent Architect base installation complete!"
+if ($IsRemoteExecution) {
+    Write-Host "✅ Agent Architect successfully installed from GitHub!"
+} else {
+    Write-Host "✅ Agent Architect base installation complete!"
+}
 Write-Host ""
 Write-Host "📍 Files installed to:"
 Write-Host "   $AgentArchitectDir\standards\     - Your development standards"
@@ -166,11 +214,11 @@ Write-Host "1. Customize your coding standards in $AgentArchitectDir\standards\"
 Write-Host ""
 Write-Host "2. Install commands for your AI coding assistant(s):"
 Write-Host ""
-Write-Host "   - Using Claude Code? Install the Claude Code commands with:"
-Write-Host "     Invoke-WebRequest -Uri https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-claude-code.ps1 -OutFile setup-claude-code.ps1; .\setup-claude-code.ps1"
+Write-Host "   📦 Claude Code (direct install):"
+Write-Host "     iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-claude-code.ps1 | iex"
 Write-Host ""
-Write-Host "   - Using Cursor? Install the Cursor commands with:"
-Write-Host "     Invoke-WebRequest -Uri https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-cursor.ps1 -OutFile setup-cursor.ps1; .\setup-cursor.ps1"
+Write-Host "   🎯 Cursor (direct install):"
+Write-Host "     iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-cursor.ps1 | iex"
 Write-Host ""
 Write-Host "   - Using something else? See instructions at https://github.com/jalalhejazi/agent-architect"
 Write-Host ""

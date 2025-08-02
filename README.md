@@ -1,12 +1,18 @@
 # Agent Architect Setup
 
-This directory contains PowerShell setup scripts for Agent Architect on Windows.
+Easy installation of Agent Architect directly from GitHub using PowerShell.
 
-## Quick Start
+## Quick Start (Recommended)
 
-Open PowerShell and run:
+**One-line installation** - copy and paste this into PowerShell:
+
 ```powershell
-.\setup.ps1
+iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup.ps1 | iex
+```
+
+**Alternative method** if you prefer to download first:
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup.ps1 -OutFile setup.ps1; .\setup.ps1
 ```
 
 ## Available Options
@@ -14,33 +20,34 @@ Open PowerShell and run:
 The PowerShell script supports the following options:
 
 - `-OverwriteInstructions` - Overwrite existing instruction files
-- `-OverwriteStandards` - Overwrite existing standards files  
+- `-OverwriteStandards` - Overwrite existing standards files
+- `-Silent` - Run without prompts (for automated installation)
 - `-Help` - Show help message
 
 ### Examples:
 ```powershell
-# Show help
-.\setup.ps1 -Help
+# Direct installation (recommended)
+iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup.ps1 | iex
 
-# Overwrite all files
+# Silent installation for automation
+iex "& { $(iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup.ps1) } -Silent"
+
+# Download first, then run with options
 .\setup.ps1 -OverwriteInstructions -OverwriteStandards
-
-# Only overwrite standards
-.\setup.ps1 -OverwriteStandards
 ```
 
 ## Troubleshooting
 
 ### Execution Policy Error
-If you get an execution policy error, you can:
+If you get an execution policy error with direct installation:
 
 1. **Run PowerShell as Administrator** and set execution policy:
    ```powershell
    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
    ```
-2. **Bypass for this session only**:
+2. **Bypass for direct installation**:
    ```powershell
-   PowerShell -ExecutionPolicy Bypass -File setup.ps1
+   Set-ExecutionPolicy Bypass -Scope Process -Force; iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup.ps1 | iex
    ```
 
 ### Network Issues
@@ -64,10 +71,15 @@ The PowerShell script installs Agent Architect files to:
 
 After installation, you can:
 
-1. **Customize your standards** in the `standards` directory
-2. **Install AI assistant commands**:
-   - For Claude Code: Download and run `setup-claude-code.ps1`
-   - For Cursor: Download and run `setup-cursor.ps1`
+1. **Customize your standards** in `%USERPROFILE%\.agent-architect\standards\`
+2. **Install AI assistant commands** (direct from GitHub):
+   ```powershell
+   # For Claude Code
+   iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-claude-code.ps1 | iex
+   
+   # For Cursor  
+   iwr -useb https://raw.githubusercontent.com/jalalhejazi/agent-architect/main/setup-cursor.ps1 | iex
+   ```
 
 ## Support
 
