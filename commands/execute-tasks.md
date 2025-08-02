@@ -2,4 +2,4 @@
 
 Execute the next task.
 
-Refer to the instructions located in @~/.agent-architect/instructions/execute-tasks.md
+Refer to the instructions located in @~/.agent-architect/instructions/core/execute-tasks.md

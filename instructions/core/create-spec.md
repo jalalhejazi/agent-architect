@@ -631,9 +631,9 @@ Evaluate readiness to begin implementation after completing all previous steps, 
 
 <standards>
   <follow>
-    - @.agent-architect/product/code-style.md
-- @.agent-architect/product/dev-best-practices.md
-- @.agent-architect/product/tech-stack.md
+    - @~/.agent-architect/standards/code-style.md
+    - @~/.agent-architect/standards/best-practices.md
+    - @~/.agent-architect/standards/tech-stack.md
   </follow>
   <maintain>
     - Consistency with product mission
