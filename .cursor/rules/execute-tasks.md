@@ -1,0 +1,8 @@
+---
+alwaysApply: false
+---
+# Execute Task
+
+Execute the next task.
+
+Refer to the instructions located in @~/.agent-architect/instructions/execute-tasks.md
